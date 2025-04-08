@@ -153,9 +153,9 @@ public class KbitFont
                         {
                             continue;
                         }
-                        var x = Kbitx.GetAttrInt(node, Kbitx.AttrX, 0)!;
-                        var y = Kbitx.GetAttrInt(node, Kbitx.AttrY, 0)!;
-                        var advance = Kbitx.GetAttrInt(node, Kbitx.AttrAdvance, 0)!;
+                        var x = Kbitx.GetAttrInt(node, Kbitx.AttrX) ?? 0;
+                        var y = Kbitx.GetAttrInt(node, Kbitx.AttrY) ?? 0;
+                        var advance = Kbitx.GetAttrInt(node, Kbitx.AttrAdvance) ?? 0;
                         var data = Kbitx.GetAttrString(node, Kbitx.AttrData);
                         List<List<byte>>? bitmap = null;
                         if (data is not null)
@@ -163,7 +163,7 @@ public class KbitFont
                             using var stream = new MemoryStream(Base64.DecodeNoPadding(Encoding.ASCII.GetBytes(data)));
                             bitmap = stream.ReadBitmap();
                         }
-                        var glyph = new KbitGlyph(x.Value, y.Value, advance.Value, bitmap);
+                        var glyph = new KbitGlyph(x, y, advance, bitmap);
                         if (codePoint is not null)
                         {
                             font.Characters[codePoint.Value] = glyph;

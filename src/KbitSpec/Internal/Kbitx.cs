@@ -38,7 +38,7 @@ internal static class Kbitx
     public const string XmlRootStart = $"<{TagRoot}>\n";
     public const string XmlRootClose = $"</{TagRoot}>\n";
 
-    public static string? GetAttrString(XmlNode node, string key, string? defaultValue = null)
+    public static string? GetAttrString(XmlNode node, string key)
     {
         var value = node.Attributes?[key]?.Value;
         if (value is not null)
@@ -49,17 +49,17 @@ internal static class Kbitx
                 return value;
             }
         }
-        return defaultValue;
+        return null;
     }
 
-    public static int? GetAttrInt(XmlNode node, string key, int? defaultValue = null)
+    public static int? GetAttrInt(XmlNode node, string key)
     {
         var value = GetAttrString(node, key);
         if (value is not null)
         {
             return Convert.ToInt32(value);
         }
-        return defaultValue;
+        return null;
     }
 
     public static void WriteXmlTagLine(TextWriter writer, string tag, List<(string, object)> attrs)
