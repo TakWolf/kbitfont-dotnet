@@ -278,12 +278,12 @@ internal static class StreamExtensions
         byte? repeatColor = null;
         foreach (var bitmapRow in bitmap)
         {
-            var bitmapRowCopyed = new List<byte>(bitmapRow);
-            if (bitmapRowCopyed.Count < width)
+            var bitmapRowCopied = new List<byte>(bitmapRow);
+            if (bitmapRowCopied.Count < width)
             {
-                bitmapRowCopyed.AddRange(Enumerable.Repeat((byte)0x00, width - bitmapRowCopyed.Count));
+                bitmapRowCopied.AddRange(Enumerable.Repeat((byte)0x00, width - bitmapRowCopied.Count));
             }
-            foreach (var color in bitmapRowCopyed)
+            foreach (var color in bitmapRowCopied)
             {
                 if (repeatCount <= 0)
                 {
