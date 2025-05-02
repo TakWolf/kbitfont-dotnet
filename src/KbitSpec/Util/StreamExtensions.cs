@@ -7,7 +7,7 @@ namespace KbitSpec.Util;
 
 internal static class StreamExtensions
 {
-    public static byte[] ReadBuffer(this Stream stream, long count)
+    public static byte[] ReadBytes(this Stream stream, long count, bool throwOnEndOfStream = true)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(count);
         if (count == 0)
@@ -15,7 +15,7 @@ internal static class StreamExtensions
             return [];
         }
         var buffer = new byte[count];
-        var numRead = stream.ReadAtLeast(buffer, buffer.Length);
+        var numRead = stream.ReadAtLeast(buffer, buffer.Length, throwOnEndOfStream);
         if (numRead != buffer.Length)
         {
             var copy = new byte[numRead];
@@ -23,6 +23,16 @@ internal static class StreamExtensions
             buffer = copy;
         }
         return buffer;
+    }
+
+    public static byte ReadUInt8(this Stream stream)
+    {
+        var b = stream.ReadByte();
+        if (b == -1)
+        {
+            throw new EndOfStreamException("Unable to read beyond the end of the stream.");
+        }
+        return (byte)b;
     }
 
     public static sbyte ReadInt8(this Stream stream)
@@ -35,28 +45,18 @@ internal static class StreamExtensions
         return (sbyte)b;
     }
 
-    public static short ReadInt16(this Stream stream) => BinaryPrimitives.ReadInt16BigEndian(stream.ReadBuffer(2));
+    public static ushort ReadUInt16(this Stream stream) => BinaryPrimitives.ReadUInt16BigEndian(stream.ReadBytes(2));
 
-    public static int ReadInt32(this Stream stream) => BinaryPrimitives.ReadInt32BigEndian(stream.ReadBuffer(4));
+    public static short ReadInt16(this Stream stream) => BinaryPrimitives.ReadInt16BigEndian(stream.ReadBytes(2));
 
-    public static byte ReadUInt8(this Stream stream)
-    {
-        var b = stream.ReadByte();
-        if (b == -1)
-        {
-            throw new EndOfStreamException("Unable to read beyond the end of the stream.");
-        }
-        return (byte)b;
-    }
+    public static uint ReadUInt32(this Stream stream) => BinaryPrimitives.ReadUInt32BigEndian(stream.ReadBytes(4));
 
-    public static ushort ReadUInt16(this Stream stream) => BinaryPrimitives.ReadUInt16BigEndian(stream.ReadBuffer(2));
-
-    public static uint ReadUInt32(this Stream stream) => BinaryPrimitives.ReadUInt32BigEndian(stream.ReadBuffer(4));
+    public static int ReadInt32(this Stream stream) => BinaryPrimitives.ReadInt32BigEndian(stream.ReadBytes(4));
 
     public static string ReadUtf(this Stream stream)
     {
         var count = stream.ReadUInt16();
-        return Encoding.UTF8.GetString(stream.ReadBuffer(count));
+        return Encoding.UTF8.GetString(stream.ReadBytes(count));
     }
 
     public static uint ReadULeb128(this Stream stream)
@@ -115,30 +115,10 @@ internal static class StreamExtensions
         return bitmap;
     }
 
-    public static int WriteBuffer(this Stream stream, ReadOnlySpan<byte> values)
+    public static int WriteBytes(this Stream stream, ReadOnlySpan<byte> values)
     {
         stream.Write(values);
         return values.Length;
-    }
-
-    public static int WriteInt8(this Stream stream, sbyte value)
-    {
-        stream.WriteByte((byte)value);
-        return 1;
-    }
-
-    public static int WriteInt16(this Stream stream, short value)
-    {
-        var buffer = new byte[2];
-        BinaryPrimitives.WriteInt16BigEndian(buffer, value);
-        return stream.WriteBuffer(buffer);
-    }
-
-    public static int WriteInt32(this Stream stream, int value)
-    {
-        var buffer = new byte[4];
-        BinaryPrimitives.WriteInt32BigEndian(buffer, value);
-        return stream.WriteBuffer(buffer);
     }
 
     public static int WriteUInt8(this Stream stream, byte value)
@@ -147,24 +127,44 @@ internal static class StreamExtensions
         return 1;
     }
 
+    public static int WriteInt8(this Stream stream, sbyte value)
+    {
+        stream.WriteByte((byte)value);
+        return 1;
+    }
+
     public static int WriteUInt16(this Stream stream, ushort value)
     {
         var buffer = new byte[2];
         BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
-        return stream.WriteBuffer(buffer);
+        return stream.WriteBytes(buffer);
+    }
+
+    public static int WriteInt16(this Stream stream, short value)
+    {
+        var buffer = new byte[2];
+        BinaryPrimitives.WriteInt16BigEndian(buffer, value);
+        return stream.WriteBytes(buffer);
     }
 
     public static int WriteUInt32(this Stream stream, uint value)
     {
         var buffer = new byte[4];
         BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
-        return stream.WriteBuffer(buffer);
+        return stream.WriteBytes(buffer);
+    }
+
+    public static int WriteInt32(this Stream stream, int value)
+    {
+        var buffer = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(buffer, value);
+        return stream.WriteBytes(buffer);
     }
 
     public static int WriteUtf(this Stream stream, string value)
     {
         var data = Encoding.UTF8.GetBytes(value);
-        return stream.WriteUInt16((ushort)data.Length) + stream.WriteBuffer(data);
+        return stream.WriteUInt16((ushort)data.Length) + stream.WriteBytes(data);
     }
 
     public static int WriteULeb128(this Stream stream, uint value)
@@ -189,7 +189,7 @@ internal static class StreamExtensions
             while (n >= 992)
             {
                 count += stream.WriteUInt8(0xFF);
-                count += stream.WriteBuffer(noRepeatColors.AsSpan(offset, 992));
+                count += stream.WriteBytes(noRepeatColors.AsSpan(offset, 992));
                 offset += 992;
                 n -= 992;
             }
@@ -198,14 +198,14 @@ internal static class StreamExtensions
                 var m = n >> 5;
                 count += stream.WriteUInt8((byte)(0xE0 | m));
                 m <<= 5;
-                count += stream.WriteBuffer(noRepeatColors.AsSpan(offset, m));
+                count += stream.WriteBytes(noRepeatColors.AsSpan(offset, m));
                 offset += m;
                 n -= m;
             }
             if (n > 1)
             {
                 count += stream.WriteUInt8((byte)(0xC0 | n));
-                count += stream.WriteBuffer(noRepeatColors.AsSpan(offset, n));
+                count += stream.WriteBytes(noRepeatColors.AsSpan(offset, n));
             }
             if (n == 1)
             {

@@ -9,7 +9,7 @@ public class KbitFont
 {
     public static KbitFont ParseKbits(Stream stream)
     {
-        if (!Kbits.MagicNumber.SequenceEqual(stream.ReadBuffer(8)))
+        if (!Kbits.MagicNumber.SequenceEqual(stream.ReadBytes(8)))
         {
             throw new KbitsException("Bad magic number.");
         }
@@ -28,7 +28,7 @@ public class KbitFont
 
         while (true)
         {
-            var blockType = stream.ReadBuffer(4);
+            var blockType = stream.ReadBytes(4);
             if (Kbits.BlockTypeName.SequenceEqual(blockType))
             {
                 if (stream.ReadUInt32() != Kbits.SpecVersion)
@@ -248,7 +248,7 @@ public class KbitFont
 
     public void DumpKbits(Stream stream)
     {
-        stream.WriteBuffer(Kbits.MagicNumber);
+        stream.WriteBytes(Kbits.MagicNumber);
         stream.WriteUInt32(Kbits.SpecVersion);
 
         stream.WriteInt32(Props.EmAscent);
@@ -260,7 +260,7 @@ public class KbitFont
 
         foreach (var (nameId, value) in Names)
         {
-            stream.WriteBuffer(Kbits.BlockTypeName);
+            stream.WriteBytes(Kbits.BlockTypeName);
             stream.WriteUInt32(Kbits.SpecVersion);
             stream.WriteInt32(nameId);
             stream.WriteUtf(value);
@@ -268,7 +268,7 @@ public class KbitFont
 
         foreach (var (codePoint, glyph) in Characters)
         {
-            stream.WriteBuffer(Kbits.BlockTypeChar);
+            stream.WriteBytes(Kbits.BlockTypeChar);
             stream.WriteUInt32(Kbits.SpecVersion);
             stream.WriteInt32(codePoint);
             stream.WriteInt32(glyph.Advance);
@@ -285,7 +285,7 @@ public class KbitFont
             }
         }
 
-        stream.WriteBuffer(Kbits.BlockTypeFin);
+        stream.WriteBytes(Kbits.BlockTypeFin);
     }
 
     public byte[] DumpKbitsToBytes()
