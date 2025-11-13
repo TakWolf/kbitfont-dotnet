@@ -1,0 +1,7 @@
+<Solution>
+    <Project Path="src/KbitSpec/KbitSpec.csproj" />
+    <Project Path="tests/KbitSpec.Tests/KbitSpec.Tests.csproj" />
+    <Project Path="examples/Example.Create/Example.Create.csproj" />
+    <Project Path="examples/Example.LoadKbits/Example.LoadKbits.csproj" />
+    <Project Path="examples/Example.LoadKbitx/Example.LoadKbitx.csproj" />
+</Solution>
