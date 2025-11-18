@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KbitSpec.Util;
+namespace KbitSpec.Utils;
 
 internal static class Kbitx
 {

@@ -1,4 +1,4 @@
-namespace KbitSpec.Util;
+namespace KbitSpec.Utils;
 
 internal static class Kbits
 {

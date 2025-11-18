@@ -1,4 +1,4 @@
-using KbitSpec.Util;
+using KbitSpec.Utils;
 
 namespace KbitSpec.Tests;
 

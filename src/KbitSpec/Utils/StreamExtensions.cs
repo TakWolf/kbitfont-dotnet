@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 [assembly: InternalsVisibleTo("KbitSpec.Tests")]
-namespace KbitSpec.Util;
+namespace KbitSpec.Utils;
 
 internal static class StreamExtensions
 {

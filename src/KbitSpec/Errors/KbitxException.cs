@@ -1,4 +1,4 @@
-namespace KbitSpec.Error;
+namespace KbitSpec.Errors;
 
 public class KbitxException : KbitException
 {

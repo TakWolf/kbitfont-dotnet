@@ -1,7 +1,7 @@
 using System.Text;
 using System.Xml;
-using KbitSpec.Error;
-using KbitSpec.Util;
+using KbitSpec.Errors;
+using KbitSpec.Utils;
 
 namespace KbitSpec;
 
