@@ -8,6 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\KbitSpec\KbitSpec.csproj" />
+        <ProjectReference Include="../../src/KbitSpec/KbitSpec.csproj" />
     </ItemGroup>
 </Project>

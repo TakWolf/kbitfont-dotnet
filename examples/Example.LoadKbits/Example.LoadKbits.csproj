@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\KbitSpec\KbitSpec.csproj" />
+        <ProjectReference Include="../../src/KbitSpec/KbitSpec.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="..\..\assets\macintosh\Athens.kbits" LinkBase="assets\macintosh" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="../../assets/macintosh/Athens.kbits" LinkBase="assets/macintosh" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>
