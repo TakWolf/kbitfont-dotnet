@@ -1,7 +1,7 @@
 # KbitFont.NET
 
-[![.NET](https://img.shields.io/badge/dotnet-8.0-mediumpurple)](https://dotnet.microsoft.com)
-[![NuGet](https://img.shields.io/nuget/v/KbitFont)](https://www.nuget.org/packages/KbitFont)
+[![.NET](https://img.shields.io/badge/dotnet-8.0-mediumpurple?style=flat-square)](https://dotnet.microsoft.com)
+[![NuGet](https://img.shields.io/nuget/v/KbitFont?style=flat-square)](https://www.nuget.org/packages/KbitFont)
 
 KbitFont is a library for parsing [Bits'N'Picas](https://github.com/kreativekorp/bitsnpicas) native save format files (`.kbits` and `.kbitx`).
 
