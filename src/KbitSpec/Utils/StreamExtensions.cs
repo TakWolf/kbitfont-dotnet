@@ -84,17 +84,17 @@ internal static class StreamExtensions
     {
         var value = 0u;
         var shift = 0;
-        while (true)
+        for (var i = 0; i < 5; i++)
         {
             var data = stream.ReadUInt8();
             value |= (uint)((data & 0x7F) << shift);
             if ((data & 0x80) == 0)
             {
-                break;
+                return value;
             }
             shift += 7;
         }
-        return value;
+        throw new InvalidDataException("ULeb128 too long.");
     }
 
     public static List<List<byte>> ReadBitmap(this Stream stream)
