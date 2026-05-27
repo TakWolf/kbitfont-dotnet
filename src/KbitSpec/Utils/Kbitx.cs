@@ -56,7 +56,7 @@ internal static class Kbitx
         var value = GetAttrString(node, key);
         if (value is not null)
         {
-            return Convert.ToInt32(value);
+            return int.Parse(value);
         }
         return null;
     }
