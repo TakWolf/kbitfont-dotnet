@@ -99,15 +99,15 @@ internal static class StreamExtensions
 
     public static List<List<byte>> ReadBitmap(this Stream stream)
     {
-        var bitmap = new List<List<byte>>();
-        var height = stream.ReadULeb128();
-        var width = stream.ReadULeb128();
+        var height = (int)stream.ReadULeb128();
+        var width = (int)stream.ReadULeb128();
         var repeatCount = 0;
         byte? repeatColor = null;
-        foreach (var _ in Enumerable.Range(0, (int)height))
+        var bitmap = new List<List<byte>>(height);
+        for (var y = 0; y < height; y++)
         {
-            var bitmapRow = new List<byte>();
-            foreach (var __ in Enumerable.Range(0, (int)width))
+            var bitmapRow = new List<byte>(width);
+            for (var x = 0; x < width; x++)
             {
                 if (repeatCount <= 0)
                 {
