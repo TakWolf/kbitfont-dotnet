@@ -45,13 +45,33 @@ internal static class StreamExtensions
         return (sbyte)b;
     }
 
-    public static ushort ReadUInt16(this Stream stream) => BinaryPrimitives.ReadUInt16BigEndian(stream.ReadBytes(2));
+    public static ushort ReadUInt16(this Stream stream)
+    {
+        Span<byte> buffer = stackalloc byte[2];
+        stream.ReadExactly(buffer);
+        return BinaryPrimitives.ReadUInt16BigEndian(buffer);
+    }
 
-    public static short ReadInt16(this Stream stream) => BinaryPrimitives.ReadInt16BigEndian(stream.ReadBytes(2));
+    public static short ReadInt16(this Stream stream)
+    {
+        Span<byte> buffer = stackalloc byte[2];
+        stream.ReadExactly(buffer);
+        return BinaryPrimitives.ReadInt16BigEndian(buffer);
+    }
 
-    public static uint ReadUInt32(this Stream stream) => BinaryPrimitives.ReadUInt32BigEndian(stream.ReadBytes(4));
+    public static uint ReadUInt32(this Stream stream)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        stream.ReadExactly(buffer);
+        return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+    }
 
-    public static int ReadInt32(this Stream stream) => BinaryPrimitives.ReadInt32BigEndian(stream.ReadBytes(4));
+    public static int ReadInt32(this Stream stream)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        stream.ReadExactly(buffer);
+        return BinaryPrimitives.ReadInt32BigEndian(buffer);
+    }
 
     public static string ReadUtf(this Stream stream)
     {
@@ -135,28 +155,28 @@ internal static class StreamExtensions
 
     public static int WriteUInt16(this Stream stream, ushort value)
     {
-        var buffer = new byte[2];
+        Span<byte> buffer = stackalloc byte[2];
         BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
         return stream.WriteBytes(buffer);
     }
 
     public static int WriteInt16(this Stream stream, short value)
     {
-        var buffer = new byte[2];
+        Span<byte> buffer = stackalloc byte[2];
         BinaryPrimitives.WriteInt16BigEndian(buffer, value);
         return stream.WriteBytes(buffer);
     }
 
     public static int WriteUInt32(this Stream stream, uint value)
     {
-        var buffer = new byte[4];
+        Span<byte> buffer = stackalloc byte[4];
         BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
         return stream.WriteBytes(buffer);
     }
 
     public static int WriteInt32(this Stream stream, int value)
     {
-        var buffer = new byte[4];
+        Span<byte> buffer = stackalloc byte[4];
         BinaryPrimitives.WriteInt32BigEndian(buffer, value);
         return stream.WriteBytes(buffer);
     }
