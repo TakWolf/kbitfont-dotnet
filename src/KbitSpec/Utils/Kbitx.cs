@@ -63,17 +63,17 @@ internal static class Kbitx
 
     public static void WriteXmlTagLine(TextWriter writer, string tag, List<(string, object)> attrs)
     {
-        writer.Write("<");
+        writer.Write('<');
         writer.Write(tag);
         foreach (var (key, value) in attrs)
         {
             var stringValue = value.ToString()!.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&#34;").Replace("'", "&#39;");
 
-            writer.Write(" ");
+            writer.Write(' ');
             writer.Write(key);
             writer.Write("=\"");
             writer.Write(stringValue);
-            writer.Write("\"");
+            writer.Write('"');
         }
         writer.Write("/>\n");
     }
