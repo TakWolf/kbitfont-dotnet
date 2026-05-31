@@ -143,11 +143,11 @@ public class StreamExtensionsTests
         ];
 
         var stream = new MemoryStream();
-        var count = stream.WriteBitmap(bitmap);
-        Assert.Equal(count, stream.Position);
+        var size = stream.WriteBitmap(bitmap);
+        Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
         Assert.Equal(bitmap, stream.ReadBitmap());
-        Assert.Equal(count, stream.Position);
+        Assert.Equal(size, stream.Position);
     }
 
     [Fact]
@@ -156,11 +156,11 @@ public class StreamExtensionsTests
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(i => (byte)(i % 0xFF)).ToList()];
 
         var stream = new MemoryStream();
-        var count = stream.WriteBitmap(bitmap);
-        Assert.Equal(count, stream.Position);
+        var size = stream.WriteBitmap(bitmap);
+        Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
         Assert.Equal(bitmap, stream.ReadBitmap());
-        Assert.Equal(count, stream.Position);
+        Assert.Equal(size, stream.Position);
     }
 
     [Fact]
@@ -169,11 +169,11 @@ public class StreamExtensionsTests
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(_ => (byte)0x00).ToList()];
 
         var stream = new MemoryStream();
-        var count = stream.WriteBitmap(bitmap);
-        Assert.Equal(count, stream.Position);
+        var size = stream.WriteBitmap(bitmap);
+        Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
         Assert.Equal(bitmap, stream.ReadBitmap());
-        Assert.Equal(count, stream.Position);
+        Assert.Equal(size, stream.Position);
     }
 
     [Fact]
@@ -182,11 +182,11 @@ public class StreamExtensionsTests
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(_ => (byte)0x80).ToList()];
 
         var stream = new MemoryStream();
-        var count = stream.WriteBitmap(bitmap);
-        Assert.Equal(count, stream.Position);
+        var size = stream.WriteBitmap(bitmap);
+        Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
         Assert.Equal(bitmap, stream.ReadBitmap());
-        Assert.Equal(count, stream.Position);
+        Assert.Equal(size, stream.Position);
     }
 
     [Fact]
@@ -195,10 +195,10 @@ public class StreamExtensionsTests
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(_ => (byte)0xFF).ToList()];
 
         var stream = new MemoryStream();
-        var count = stream.WriteBitmap(bitmap);
-        Assert.Equal(count, stream.Position);
+        var size = stream.WriteBitmap(bitmap);
+        Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
         Assert.Equal(bitmap, stream.ReadBitmap());
-        Assert.Equal(count, stream.Position);
+        Assert.Equal(size, stream.Position);
     }
 }

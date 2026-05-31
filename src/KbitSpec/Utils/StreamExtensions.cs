@@ -8,14 +8,14 @@ namespace KbitSpec.Utils;
 
 internal static class StreamExtensions
 {
-    public static byte[] ReadBytes(this Stream stream, long count, bool throwOnEndOfStream = true)
+    public static byte[] ReadBytes(this Stream stream, int size, bool throwOnEndOfStream = true)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(count);
-        if (count == 0)
+        ArgumentOutOfRangeException.ThrowIfNegative(size);
+        if (size == 0)
         {
             return [];
         }
-        var buffer = new byte[count];
+        var buffer = new byte[size];
         var numRead = stream.ReadAtLeast(buffer, buffer.Length, throwOnEndOfStream);
         if (numRead != buffer.Length)
         {
@@ -76,8 +76,8 @@ internal static class StreamExtensions
 
     public static string ReadUtf(this Stream stream)
     {
-        var count = stream.ReadUInt16();
-        return Encoding.UTF8.GetString(stream.ReadBytes(count));
+        var size = stream.ReadUInt16();
+        return Encoding.UTF8.GetString(stream.ReadBytes(size));
     }
 
     public static uint ReadULeb128(this Stream stream)
@@ -190,44 +190,44 @@ internal static class StreamExtensions
 
     public static int WriteULeb128(this Stream stream, uint value)
     {
-        var count = 0;
+        var size = 0;
         while (value >= 0x80)
         {
-            count += stream.WriteUInt8((byte)((value | 0x80) & 0xFF));
+            size += stream.WriteUInt8((byte)((value | 0x80) & 0xFF));
             value >>= 7;
         }
-        count += stream.WriteUInt8((byte)(value & 0xFF));
-        return count;
+        size += stream.WriteUInt8((byte)(value & 0xFF));
+        return size;
     }
 
     private static int WriteBitmapRuns(this Stream stream, List<byte> noRepeatColors, int repeatCount, byte? repeatColor)
     {
+        var size = 0;
         var colors = CollectionsMarshal.AsSpan(noRepeatColors);
-        var count = 0;
         if (colors.Length > 0)
         {
             var n = colors.Length;
             var offset = 0;
             while (n >= 992)
             {
-                count += stream.WriteUInt8(0xFF);
-                count += stream.WriteBytes(colors.Slice(offset, 992));
+                size += stream.WriteUInt8(0xFF);
+                size += stream.WriteBytes(colors.Slice(offset, 992));
                 offset += 992;
                 n -= 992;
             }
             if (n >= 32)
             {
                 var m = n >> 5;
-                count += stream.WriteUInt8((byte)(0xE0 | m));
+                size += stream.WriteUInt8((byte)(0xE0 | m));
                 m <<= 5;
-                count += stream.WriteBytes(colors.Slice(offset, m));
+                size += stream.WriteBytes(colors.Slice(offset, m));
                 offset += m;
                 n -= m;
             }
             if (n > 1)
             {
-                count += stream.WriteUInt8((byte)(0xC0 | n));
-                count += stream.WriteBytes(colors.Slice(offset, n));
+                size += stream.WriteUInt8((byte)(0xC0 | n));
+                size += stream.WriteBytes(colors.Slice(offset, n));
             }
             if (n == 1)
             {
@@ -235,14 +235,14 @@ internal static class StreamExtensions
                 switch (color)
                 {
                     case 0x00:
-                        count += stream.WriteUInt8(0x01);
+                        size += stream.WriteUInt8(0x01);
                         break;
                     case 0xFF:
-                        count += stream.WriteUInt8(0x41);
+                        size += stream.WriteUInt8(0x41);
                         break;
                     default:
-                        count += stream.WriteUInt8(0x81);
-                        count += stream.WriteUInt8(color);
+                        size += stream.WriteUInt8(0x81);
+                        size += stream.WriteUInt8(color);
                         break;
                 }
             }
@@ -258,39 +258,39 @@ internal static class StreamExtensions
             var pat = repeatColor != 0x00 && repeatColor != 0xFF;
             while (repeatCount >= 992)
             {
-                count += stream.WriteUInt8((byte)(basic | 0x3F));
+                size += stream.WriteUInt8((byte)(basic | 0x3F));
                 if (pat)
                 {
-                    count += stream.WriteUInt8(repeatColor!.Value);
+                    size += stream.WriteUInt8(repeatColor!.Value);
                 }
                 repeatCount -= 992;
             }
             if (repeatCount >= 32)
             {
                 var m = repeatCount >> 5;
-                count += stream.WriteUInt8((byte)(basic | 0x20 | m));
+                size += stream.WriteUInt8((byte)(basic | 0x20 | m));
                 m <<= 5;
                 if (pat)
                 {
-                    count += stream.WriteUInt8(repeatColor!.Value);
+                    size += stream.WriteUInt8(repeatColor!.Value);
                 }
                 repeatCount -= m;
             }
             if (repeatCount > 0)
             {
-                count += stream.WriteUInt8((byte)(basic | repeatCount));
+                size += stream.WriteUInt8((byte)(basic | repeatCount));
                 if (pat)
                 {
-                    count += stream.WriteUInt8(repeatColor!.Value);
+                    size += stream.WriteUInt8(repeatColor!.Value);
                 }
             }
         }
-        return count;
+        return size;
     }
 
     public static int WriteBitmap(this Stream stream, List<List<byte>> bitmap)
     {
-        var count = 0;
+        var size = 0;
         var height = bitmap.Count;
         var width = 0;
         if (height > 0)
@@ -300,8 +300,8 @@ internal static class StreamExtensions
                 width = Math.Max(bitmapRow.Count, width);
             }
         }
-        count += stream.WriteULeb128((uint)height);
-        count += stream.WriteULeb128((uint)width);
+        size += stream.WriteULeb128((uint)height);
+        size += stream.WriteULeb128((uint)width);
         var noRepeatColors = new List<byte>();
         var repeatCount = 0;
         byte? repeatColor = null;
@@ -326,7 +326,7 @@ internal static class StreamExtensions
                 }
                 else
                 {
-                    count += stream.WriteBitmapRuns(noRepeatColors, repeatCount, repeatColor!.Value);
+                    size += stream.WriteBitmapRuns(noRepeatColors, repeatCount, repeatColor!.Value);
                     noRepeatColors.Clear();
                     repeatCount = 1;
                     repeatColor = color;
@@ -338,7 +338,7 @@ internal static class StreamExtensions
             noRepeatColors.Add(repeatColor!.Value);
             repeatCount = 0;
         }
-        count += stream.WriteBitmapRuns(noRepeatColors, repeatCount, repeatColor);
-        return count;
+        size += stream.WriteBitmapRuns(noRepeatColors, repeatCount, repeatColor);
+        return size;
     }
 }
