@@ -49,11 +49,13 @@ public class KbitFont
                 var advance = stream.ReadInt32();
                 var x = stream.ReadInt32();
                 var y = stream.ReadInt32();
-                var bitmap = new List<List<byte>>();
-                foreach (var _ in Enumerable.Range(0, (int)stream.ReadUInt32()))
+                var height = (int)stream.ReadUInt32();
+                var bitmap = new List<List<byte>>(height);
+                for (var i = 0; i < height; i++)
                 {
-                    var bitmapRow = new List<byte>();
-                    foreach (var __ in Enumerable.Range(0, (int)stream.ReadUInt32()))
+                    var width = (int)stream.ReadUInt32();
+                    var bitmapRow = new List<byte>(width);
+                    for (var j = 0; j < width; j++)
                     {
                         bitmapRow.Add(stream.ReadUInt8());
                     }
