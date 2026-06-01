@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -15,13 +16,14 @@ internal static class StreamExtensions
         {
             return [];
         }
+
         var buffer = new byte[size];
-        var numRead = stream.ReadAtLeast(buffer, buffer.Length, throwOnEndOfStream);
-        if (numRead != buffer.Length)
+        var numRead = stream.ReadAtLeast(buffer, size, throwOnEndOfStream);
+        if (numRead != size)
         {
-            var copy = new byte[numRead];
-            Buffer.BlockCopy(buffer, 0, copy, 0, numRead);
-            buffer = copy;
+            var newBuffer = new byte[numRead];
+            Buffer.BlockCopy(buffer, 0, newBuffer, 0, numRead);
+            buffer = newBuffer;
         }
         return buffer;
     }
@@ -77,7 +79,16 @@ internal static class StreamExtensions
     public static string ReadUtf(this Stream stream)
     {
         var size = stream.ReadUInt16();
-        return Encoding.UTF8.GetString(stream.ReadBytes(size));
+        var buffer = ArrayPool<byte>.Shared.Rent(size);
+        try
+        {
+            stream.ReadExactly(buffer, 0, size);
+            return Encoding.UTF8.GetString(buffer, 0, size);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 
     public static uint ReadULeb128(this Stream stream)
@@ -136,10 +147,15 @@ internal static class StreamExtensions
         return bitmap;
     }
 
-    public static int WriteBytes(this Stream stream, ReadOnlySpan<byte> values)
+    public static int WriteBytes(this Stream stream, ReadOnlySpan<byte> buffer)
     {
-        stream.Write(values);
-        return values.Length;
+        if (buffer.IsEmpty)
+        {
+            return 0;
+        }
+
+        stream.Write(buffer);
+        return buffer.Length;
     }
 
     public static int WriteUInt8(this Stream stream, byte value)
@@ -184,8 +200,23 @@ internal static class StreamExtensions
 
     public static int WriteUtf(this Stream stream, string value)
     {
-        var data = Encoding.UTF8.GetBytes(value);
-        return stream.WriteUInt16((ushort)data.Length) + stream.WriteBytes(data);
+        if (value.Length == 0)
+        {
+            return stream.WriteUInt16(0);
+        }
+
+        var buffer = ArrayPool<byte>.Shared.Rent(Encoding.UTF8.GetMaxByteCount(value.Length));
+        try
+        {
+            var size = Encoding.UTF8.GetBytes(value, buffer);
+            stream.WriteUInt16((ushort)size);
+            stream.Write(buffer, 0, size);
+            return 2 + size;
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 
     public static int WriteULeb128(this Stream stream, uint value)
