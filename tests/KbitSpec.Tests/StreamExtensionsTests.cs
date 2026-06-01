@@ -7,7 +7,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestBytes()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(11, stream.WriteBytes("Hello World"u8));
         Assert.Equal(11, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
@@ -18,7 +18,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestEof()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         stream.WriteBytes("ABC"u8);
         Assert.Throws<EndOfStreamException>(() => stream.ReadBytes(4));
         stream.Seek(0, SeekOrigin.Begin);
@@ -28,7 +28,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestUInt8()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(1, stream.WriteUInt8(0x00));
         Assert.Equal(1, stream.WriteUInt8(0xFF));
         Assert.Equal(2, stream.Position);
@@ -41,7 +41,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestInt8()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(1, stream.WriteInt8(-0x80));
         Assert.Equal(1, stream.WriteInt8(0x7F));
         Assert.Equal(2, stream.Position);
@@ -54,7 +54,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestUInt16()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(2, stream.WriteUInt16(0x0000));
         Assert.Equal(2, stream.WriteUInt16(0xFFFF));
         Assert.Equal(4, stream.Position);
@@ -67,7 +67,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestInt16()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(2, stream.WriteInt16(-0x8000));
         Assert.Equal(2, stream.WriteInt16(0x7FFF));
         Assert.Equal(4, stream.Position);
@@ -80,7 +80,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestUInt32()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(4, stream.WriteUInt32(0x00000000u));
         Assert.Equal(4, stream.WriteUInt32(0xFFFFFFFFu));
         Assert.Equal(8, stream.Position);
@@ -93,7 +93,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestInt32()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(4, stream.WriteInt32(-0x80000000));
         Assert.Equal(4, stream.WriteInt32(0x7FFFFFFF));
         Assert.Equal(8, stream.Position);
@@ -106,7 +106,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestUtf()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(5, stream.WriteUtf("ABC"));
         Assert.Equal(7, stream.WriteUtf("12345"));
         Assert.Equal(12, stream.Position);
@@ -119,7 +119,7 @@ public class StreamExtensionsTests
     [Fact]
     public void TestULeb128()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         Assert.Equal(3, stream.WriteULeb128(65535u));
         Assert.Equal(3, stream.WriteULeb128(624485u));
         Assert.Equal(3, stream.WriteBytes([0xFF, 0xFF, 0x03]));
@@ -142,7 +142,7 @@ public class StreamExtensionsTests
             [0x00, 0x00, 0xFF, 0xFF, 0x80]
         ];
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         var size = stream.WriteBitmap(bitmap);
         Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
@@ -155,7 +155,7 @@ public class StreamExtensionsTests
     {
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(i => (byte)(i % 0xFF)).ToList()];
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         var size = stream.WriteBitmap(bitmap);
         Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
@@ -168,7 +168,7 @@ public class StreamExtensionsTests
     {
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(_ => (byte)0x00).ToList()];
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         var size = stream.WriteBitmap(bitmap);
         Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
@@ -181,7 +181,7 @@ public class StreamExtensionsTests
     {
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(_ => (byte)0x80).ToList()];
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         var size = stream.WriteBitmap(bitmap);
         Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
@@ -194,7 +194,7 @@ public class StreamExtensionsTests
     {
         List<List<byte>> bitmap = [Enumerable.Range(0, 1050).Select(_ => (byte)0xFF).ToList()];
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         var size = stream.WriteBitmap(bitmap);
         Assert.Equal(size, stream.Position);
         stream.Seek(0, SeekOrigin.Begin);
