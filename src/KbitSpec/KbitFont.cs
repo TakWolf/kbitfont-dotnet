@@ -35,6 +35,7 @@ public class KbitFont
                 {
                     throw new KbitsException("Bad spec version.");
                 }
+
                 var nameId = stream.ReadInt32();
                 var value = stream.ReadUtf();
                 font.Names[nameId] = value;
@@ -45,11 +46,13 @@ public class KbitFont
                 {
                     throw new KbitsException("Bad spec version.");
                 }
+
                 var codePoint = stream.ReadInt32();
                 var advance = stream.ReadInt32();
                 var x = stream.ReadInt32();
                 var y = stream.ReadInt32();
                 var height = (int)stream.ReadUInt32();
+
                 var bitmap = new List<List<byte>>(height);
                 for (var i = 0; i < height; i++)
                 {
@@ -61,6 +64,7 @@ public class KbitFont
                     }
                     bitmap.Add(bitmapRow);
                 }
+
                 font.Characters[codePoint] = new KbitGlyph(x, y, advance, bitmap);
             }
             else if (Kbits.BlockTypeFin.SequenceEqual(blockType))
@@ -110,6 +114,7 @@ public class KbitFont
                         {
                             continue;
                         }
+
                         var name = Kbitx.GetAttrString(node, Kbitx.AttrId);
                         switch (name)
                         {
@@ -155,16 +160,19 @@ public class KbitFont
                         {
                             continue;
                         }
+
                         var x = Kbitx.GetAttrInt(node, Kbitx.AttrX) ?? 0;
                         var y = Kbitx.GetAttrInt(node, Kbitx.AttrY) ?? 0;
                         var advance = Kbitx.GetAttrInt(node, Kbitx.AttrAdvance) ?? 0;
                         var data = Kbitx.GetAttrString(node, Kbitx.AttrData);
+
                         List<List<byte>>? bitmap = null;
                         if (data is not null)
                         {
                             using var stream = new MemoryStream(Base64.DecodeNoPadding(Encoding.ASCII.GetBytes(data)));
                             bitmap = stream.ReadBitmap();
                         }
+
                         var glyph = new KbitGlyph(x, y, advance, bitmap);
                         if (codePoint is not null)
                         {
@@ -183,31 +191,23 @@ public class KbitFont
                         {
                             continue;
                         }
+
                         var leftCodePoint = Kbitx.GetAttrInt(node, Kbitx.AttrLeftUnicode);
                         var leftGlyphName = Kbitx.GetAttrString(node, Kbitx.AttrLeftName);
                         var rightCodePoint = Kbitx.GetAttrInt(node, Kbitx.AttrRightUnicode);
                         var rightGlyphName = Kbitx.GetAttrString(node, Kbitx.AttrRightName);
-                        if (leftCodePoint is not null)
+
+                        (KbitGlyphKey, KbitGlyphKey)? keys = (leftCodePoint, leftGlyphName, rightCodePoint, rightGlyphName) switch
                         {
-                            if (rightCodePoint is not null)
-                            {
-                                font.KernPairs[new KbitKernKey(leftCodePoint, rightCodePoint)] = offset.Value;
-                            }
-                            else if (rightGlyphName is not null)
-                            {
-                                font.KernPairs[new KbitKernKey(leftCodePoint, rightGlyphName)] = offset.Value;
-                            }
-                        }
-                        else if (leftGlyphName is not null)
+                            (not null, _, not null, _) => (leftCodePoint.Value, rightCodePoint.Value),
+                            (_, not null, _, not null) => (leftGlyphName, rightGlyphName),
+                            (not null, _, _, not null) => (leftCodePoint.Value, rightGlyphName),
+                            (_, not null, not null, _) => (leftGlyphName, rightCodePoint.Value),
+                            _ => null
+                        };
+                        if (keys is not null)
                         {
-                            if (rightCodePoint is not null)
-                            {
-                                font.KernPairs[new KbitKernKey(leftGlyphName, rightCodePoint)] = offset.Value;
-                            }
-                            else if (rightGlyphName is not null)
-                            {
-                                font.KernPairs[new KbitKernKey(leftGlyphName, rightGlyphName)] = offset.Value;
-                            }
+                            font.KernPairs[keys.Value] = offset.Value;
                         }
                         break;
                     }
@@ -232,20 +232,20 @@ public class KbitFont
     public KbitNames Names;
     public SortedDictionary<int, KbitGlyph> Characters;
     public SortedDictionary<string, KbitGlyph> NamedGlyphs;
-    public SortedDictionary<KbitKernKey, int> KernPairs;
+    public SortedDictionary<(KbitGlyphKey, KbitGlyphKey), int> KernPairs;
 
     public KbitFont(
         KbitProps? props = null,
         KbitNames? names = null,
         SortedDictionary<int, KbitGlyph>? characters = null,
         SortedDictionary<string, KbitGlyph>? namedGlyphs = null,
-        SortedDictionary<KbitKernKey, int>? kernPairs = null)
+        SortedDictionary<(KbitGlyphKey, KbitGlyphKey), int>? kernPairs = null)
     {
         Props = props ?? new KbitProps();
         Names = names ?? new KbitNames();
         Characters = characters ?? new SortedDictionary<int, KbitGlyph>();
         NamedGlyphs = namedGlyphs ?? new SortedDictionary<string, KbitGlyph>();
-        KernPairs = kernPairs ?? new SortedDictionary<KbitKernKey, int>();
+        KernPairs = kernPairs ?? new SortedDictionary<(KbitGlyphKey, KbitGlyphKey), int>();
     }
 
     public void DumpKbits(Stream stream)
@@ -376,37 +376,30 @@ public class KbitFont
 
         foreach (var ((left, right), offset) in KernPairs)
         {
-            switch (left)
+            Kbitx.WriteXmlTagLine(writer, Kbitx.TagKern, (left, right) switch
             {
-                case int when right is int:
-                    Kbitx.WriteXmlTagLine(writer, Kbitx.TagKern, [
-                        (Kbitx.AttrLeftUnicode, left),
-                        (Kbitx.AttrRightUnicode, right),
-                        (Kbitx.AttrOffset, offset)
-                    ]);
-                    break;
-                case int when right is string:
-                    Kbitx.WriteXmlTagLine(writer, Kbitx.TagKern, [
-                        (Kbitx.AttrLeftUnicode, left),
-                        (Kbitx.AttrRightName, right),
-                        (Kbitx.AttrOffset, offset)
-                    ]);
-                    break;
-                case string when right is int:
-                    Kbitx.WriteXmlTagLine(writer, Kbitx.TagKern, [
-                        (Kbitx.AttrLeftName, left),
-                        (Kbitx.AttrRightUnicode, right),
-                        (Kbitx.AttrOffset, offset)
-                    ]);
-                    break;
-                case string when right is string:
-                    Kbitx.WriteXmlTagLine(writer, Kbitx.TagKern, [
-                        (Kbitx.AttrLeftName, left),
-                        (Kbitx.AttrRightName, right),
-                        (Kbitx.AttrOffset, offset)
-                    ]);
-                    break;
-            }
+                ({ IsInt: true }, { IsInt: true }) => [
+                    (Kbitx.AttrLeftUnicode, left.AsInt()),
+                    (Kbitx.AttrRightUnicode, right.AsInt()),
+                    (Kbitx.AttrOffset, offset)
+                ],
+                ({ IsString: true }, { IsString: true }) => [
+                    (Kbitx.AttrLeftName, left.AsString()),
+                    (Kbitx.AttrRightName, right.AsString()),
+                    (Kbitx.AttrOffset, offset)
+                ],
+                ({ IsInt: true }, { IsString: true }) => [
+                    (Kbitx.AttrLeftUnicode, left.AsInt()),
+                    (Kbitx.AttrRightName, right.AsString()),
+                    (Kbitx.AttrOffset, offset)
+                ],
+                ({ IsString: true }, { IsInt: true }) => [
+                    (Kbitx.AttrLeftName, left.AsString()),
+                    (Kbitx.AttrRightUnicode, right.AsInt()),
+                    (Kbitx.AttrOffset, offset)
+                ],
+                _ => throw new InvalidOperationException()
+            });
         }
 
         writer.Write(Kbitx.XmlRootClose);

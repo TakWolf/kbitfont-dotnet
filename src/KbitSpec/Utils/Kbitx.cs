@@ -61,7 +61,7 @@ internal static class Kbitx
         return null;
     }
 
-    public static void WriteXmlTagLine(TextWriter writer, string tag, List<(string, object)> attrs)
+    public static void WriteXmlTagLine(TextWriter writer, string tag, ReadOnlySpan<(string, object)> attrs)
     {
         writer.Write('<');
         writer.Write(tag);
