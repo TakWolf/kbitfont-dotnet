@@ -1,4 +1,6 @@
-namespace KbitSpec.Tests;
+using KbitSpec.Tests.TestUtils;
+
+namespace KbitSpec.Tests.Conformance;
 
 public class LoadSaveTests
 {

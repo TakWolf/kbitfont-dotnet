@@ -1,4 +1,4 @@
-namespace KbitSpec.Tests;
+namespace KbitSpec.Tests.TestUtils;
 
 internal static class PathUtil
 {

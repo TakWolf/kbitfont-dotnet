@@ -1,6 +1,6 @@
 using KbitSpec.Utils;
 
-namespace KbitSpec.Tests;
+namespace KbitSpec.Tests.Utils;
 
 public class Base64Tests
 {

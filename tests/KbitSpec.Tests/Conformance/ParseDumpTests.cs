@@ -1,4 +1,4 @@
-namespace KbitSpec.Tests;
+namespace KbitSpec.Tests.Conformance;
 
 public class ParseDumpTests
 {
