@@ -228,11 +228,11 @@ public class KbitFont
         return ParseKbitx(reader);
     }
 
-    public KbitProps Props;
-    public KbitNames Names;
-    public SortedDictionary<int, KbitGlyph> Characters;
-    public SortedDictionary<string, KbitGlyph> NamedGlyphs;
-    public SortedDictionary<(KbitGlyphKey, KbitGlyphKey), int> KernPairs;
+    public KbitProps Props { get; set; }
+    public KbitNames Names { get; set; }
+    public SortedDictionary<int, KbitGlyph> Characters { get; set; }
+    public SortedDictionary<string, KbitGlyph> NamedGlyphs { get; set; }
+    public SortedDictionary<(KbitGlyphKey, KbitGlyphKey), int> KernPairs { get; set; }
 
     public KbitFont(
         KbitProps? props = null,

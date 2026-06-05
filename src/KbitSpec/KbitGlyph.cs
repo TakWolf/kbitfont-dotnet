@@ -2,10 +2,10 @@ namespace KbitSpec;
 
 public class KbitGlyph
 {
-    public int X;
-    public int Y;
-    public int Advance;
-    public List<List<byte>> Bitmap;
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Advance { get; set; }
+    public List<List<byte>> Bitmap { get; set; }
 
     public KbitGlyph(
         int x = 0,

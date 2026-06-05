@@ -2,13 +2,13 @@ namespace KbitSpec;
 
 public class KbitProps
 {
-    public int EmAscent;
-    public int EmDescent;
-    public int LineAscent;
-    public int LineDescent;
-    public int LineGap;
-    public int XHeight;
-    public int CapHeight;
+    public int EmAscent { get; set; }
+    public int EmDescent { get; set; }
+    public int LineAscent { get; set; }
+    public int LineDescent { get; set; }
+    public int LineGap { get; set; }
+    public int XHeight { get; set; }
+    public int CapHeight { get; set; }
 
     public KbitProps(
         int emAscent = 0,
