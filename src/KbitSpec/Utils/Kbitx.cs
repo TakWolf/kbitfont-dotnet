@@ -43,7 +43,7 @@ internal static class Kbitx
         if (value is not null)
         {
             value = value.Trim();
-            if (!"".Equals(value))
+            if (value is not "")
             {
                 return value;
             }

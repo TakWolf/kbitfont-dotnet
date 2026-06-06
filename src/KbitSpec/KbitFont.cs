@@ -97,7 +97,7 @@ public class KbitFont
         var document = new XmlDocument();
         document.Load(reader);
         var root = document.DocumentElement;
-        if (!Kbitx.TagRoot.Equals(root?.Name))
+        if (root?.Name is not Kbitx.TagRoot)
         {
             throw new KbitxException($"Unknown root: {root?.Name}");
         }
