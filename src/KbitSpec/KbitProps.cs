@@ -1,6 +1,6 @@
 namespace KbitSpec;
 
-public class KbitProps
+public class KbitProps : IEquatable<KbitProps>
 {
     public int EmAscent { get; set; }
     public int EmDescent { get; set; }
@@ -31,4 +31,42 @@ public class KbitProps
     public int EmHeight => EmAscent + EmDescent;
 
     public int LineHeight => LineAscent + LineDescent;
+
+    public bool Equals(KbitProps? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        return EmAscent == other.EmAscent &&
+               EmDescent == other.EmDescent &&
+               LineAscent == other.LineAscent &&
+               LineDescent == other.LineDescent &&
+               LineGap == other.LineGap &&
+               XHeight == other.XHeight &&
+               CapHeight == other.CapHeight;
+    }
+
+    public override bool Equals(object? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        if (other.GetType() != GetType())
+        {
+            return false;
+        }
+        return Equals((KbitProps)other);
+    }
+
+    public override int GetHashCode() => 0;
 }

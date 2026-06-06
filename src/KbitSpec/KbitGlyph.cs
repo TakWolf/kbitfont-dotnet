@@ -1,6 +1,8 @@
+using KbitSpec.Utils;
+
 namespace KbitSpec;
 
-public class KbitGlyph
+public class KbitGlyph : IEquatable<KbitGlyph>
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -24,4 +26,39 @@ public class KbitGlyph
     public int Height => Bitmap.Count;
 
     public (int, int) Dimensions => (Width, Height);
+
+    public bool Equals(KbitGlyph? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        return X == other.X &&
+               Y == other.Y &&
+               Advance == other.Advance &&
+               EqualUtil.BitmapEquals(Bitmap, other.Bitmap);
+    }
+
+    public override bool Equals(object? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        if (other.GetType() != GetType())
+        {
+            return false;
+        }
+        return Equals((KbitGlyph)other);
+    }
+
+    public override int GetHashCode() => 0;
 }

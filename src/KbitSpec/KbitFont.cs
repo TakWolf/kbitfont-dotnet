@@ -5,7 +5,7 @@ using KbitSpec.Utils;
 
 namespace KbitSpec;
 
-public class KbitFont
+public class KbitFont : IEquatable<KbitFont>
 {
     public static KbitFont ParseKbits(Stream stream)
     {
@@ -417,4 +417,40 @@ public class KbitFont
         using var writer = new StreamWriter(path);
         DumpKbitx(writer);
     }
+
+    public bool Equals(KbitFont? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        return Props.Equals(other.Props) &&
+               Names.Equals(other.Names) &&
+               EqualUtil.DictionaryEquals(Characters, other.Characters) &&
+               EqualUtil.DictionaryEquals(NamedGlyphs, other.NamedGlyphs) &&
+               EqualUtil.DictionaryEquals(KernPairs, other.KernPairs);
+    }
+
+    public override bool Equals(object? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        if (other.GetType() != GetType())
+        {
+            return false;
+        }
+        return Equals((KbitFont)other);
+    }
+
+    public override int GetHashCode() => 0;
 }

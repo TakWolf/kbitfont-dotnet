@@ -1,6 +1,8 @@
+using KbitSpec.Utils;
+
 namespace KbitSpec;
 
-public class KbitNames : SortedDictionary<int, string>
+public class KbitNames : SortedDictionary<int, string>, IEquatable<KbitNames>
 {
     private const int NameIdCopyright = 0;
     private const int NameIdFamily = 1;
@@ -170,4 +172,36 @@ public class KbitNames : SortedDictionary<int, string>
         get => GetValue(NameIdWwsStyle);
         set => SetValue(NameIdWwsStyle, value);
     }
+
+    public bool Equals(KbitNames? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        return EqualUtil.DictionaryEquals(this, other);
+    }
+
+    public override bool Equals(object? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        if (other.GetType() != GetType())
+        {
+            return false;
+        }
+        return Equals((KbitNames)other);
+    }
+
+    public override int GetHashCode() => 0;
 }
