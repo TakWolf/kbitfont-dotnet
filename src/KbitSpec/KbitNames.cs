@@ -2,7 +2,7 @@ using KbitSpec.Utils;
 
 namespace KbitSpec;
 
-public class KbitNames : SortedDictionary<int, string>, IEquatable<KbitNames>
+public class KbitNames : SortedDictionary<int, string>, ICopyable<KbitNames>, IEquatable<KbitNames>
 {
     private const int NameIdCopyright = 0;
     private const int NameIdFamily = 1;
@@ -172,6 +172,18 @@ public class KbitNames : SortedDictionary<int, string>, IEquatable<KbitNames>
         get => GetValue(NameIdWwsStyle);
         set => SetValue(NameIdWwsStyle, value);
     }
+
+    public KbitNames Copy()
+    {
+        var names = new KbitNames();
+        foreach (var (key, value) in this)
+        {
+            names[key] = value;
+        }
+        return names;
+    }
+
+    public KbitNames DeepCopy() => Copy();
 
     public bool Equals(KbitNames? other)
     {

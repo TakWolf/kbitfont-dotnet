@@ -1,6 +1,8 @@
+using KbitSpec.Utils;
+
 namespace KbitSpec;
 
-public class KbitProps : IEquatable<KbitProps>
+public class KbitProps : ICopyable<KbitProps>, IEquatable<KbitProps>
 {
     public int EmAscent { get; set; }
     public int EmDescent { get; set; }
@@ -31,6 +33,17 @@ public class KbitProps : IEquatable<KbitProps>
     public int EmHeight => EmAscent + EmDescent;
 
     public int LineHeight => LineAscent + LineDescent;
+
+    public KbitProps Copy() => new(
+        EmAscent,
+        EmDescent,
+        LineAscent,
+        LineDescent,
+        LineGap,
+        XHeight,
+        CapHeight);
+
+    public KbitProps DeepCopy() => Copy();
 
     public bool Equals(KbitProps? other)
     {

@@ -2,7 +2,7 @@ using KbitSpec.Utils;
 
 namespace KbitSpec;
 
-public class KbitGlyph : IEquatable<KbitGlyph>
+public class KbitGlyph : ICopyable<KbitGlyph>, IEquatable<KbitGlyph>
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -26,6 +26,18 @@ public class KbitGlyph : IEquatable<KbitGlyph>
     public int Height => Bitmap.Count;
 
     public (int, int) Dimensions => (Width, Height);
+
+    public KbitGlyph Copy() => new(
+        X,
+        Y,
+        Advance,
+        Bitmap);
+
+    public KbitGlyph DeepCopy() => new(
+        X,
+        Y,
+        Advance,
+        CopyUtil.DeepCopyBitmap(Bitmap));
 
     public bool Equals(KbitGlyph? other)
     {
