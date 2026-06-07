@@ -27,6 +27,10 @@ public class KbitNames : SortedDictionary<int, string>, ICopyable<KbitNames>, IE
     private const int NameIdWwsFamily = 21;
     private const int NameIdWwsStyle = 22;
 
+    public KbitNames() { }
+
+    public KbitNames(IDictionary<int, string> names) : base(names) { }
+
     private string? GetValue(int key) => TryGetValue(key, out var value) ? value : null;
 
     private void SetValue(int key, string? value)
@@ -173,15 +177,7 @@ public class KbitNames : SortedDictionary<int, string>, ICopyable<KbitNames>, IE
         set => SetValue(NameIdWwsStyle, value);
     }
 
-    public KbitNames Copy()
-    {
-        var names = new KbitNames();
-        foreach (var (key, value) in this)
-        {
-            names[key] = value;
-        }
-        return names;
-    }
+    public KbitNames Copy() => new(this);
 
     public KbitNames DeepCopy() => Copy();
 
