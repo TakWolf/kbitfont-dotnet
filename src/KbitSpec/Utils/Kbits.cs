@@ -1,12 +1,14 @@
+using System.Buffers.Binary;
+
 namespace KbitSpec.Utils;
 
 internal static class Kbits
 {
-    public static readonly byte[] MagicNumber = "KBnPbits"u8.ToArray();
+    public static readonly ulong MagicNumber = BinaryPrimitives.ReadUInt64LittleEndian("KBnPbits"u8);
 
     public const uint SpecVersion = 1;
 
-    public static readonly byte[] BlockTypeName = "name"u8.ToArray();
-    public static readonly byte[] BlockTypeChar = "char"u8.ToArray();
-    public static readonly byte[] BlockTypeFin = "fin."u8.ToArray();
+    public static readonly uint BlockTypeName = BinaryPrimitives.ReadUInt32LittleEndian("name"u8);
+    public static readonly uint BlockTypeChar = BinaryPrimitives.ReadUInt32LittleEndian("char"u8);
+    public static readonly uint BlockTypeFin = BinaryPrimitives.ReadUInt32LittleEndian("fin."u8);
 }

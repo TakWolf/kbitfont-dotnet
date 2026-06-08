@@ -28,6 +28,20 @@ internal static class StreamExtensions
         return buffer;
     }
 
+    public static ulong ReadMagicNumber(this Stream stream)
+    {
+        Span<byte> span = stackalloc byte[8];
+        stream.ReadExactly(span);
+        return BinaryPrimitives.ReadUInt64LittleEndian(span);
+    }
+
+    public static uint ReadBlockType(this Stream stream)
+    {
+        Span<byte> span = stackalloc byte[4];
+        stream.ReadExactly(span);
+        return BinaryPrimitives.ReadUInt32LittleEndian(span);
+    }
+
     public static byte ReadUInt8(this Stream stream)
     {
         var b = stream.ReadByte();
@@ -156,6 +170,20 @@ internal static class StreamExtensions
 
         stream.Write(buffer);
         return buffer.Length;
+    }
+
+    public static int WriteMagicNumber(this Stream stream, ulong value)
+    {
+        Span<byte> span = stackalloc byte[8];
+        BinaryPrimitives.WriteUInt64LittleEndian(span, value);
+        return stream.WriteBytes(span);
+    }
+
+    public static int WriteBlockType(this Stream stream, uint value)
+    {
+        Span<byte> span = stackalloc byte[4];
+        BinaryPrimitives.WriteUInt32LittleEndian(span, value);
+        return stream.WriteBytes(span);
     }
 
     public static int WriteUInt8(this Stream stream, byte value)

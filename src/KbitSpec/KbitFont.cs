@@ -9,7 +9,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 {
     public static KbitFont ParseKbits(Stream stream)
     {
-        if (!Kbits.MagicNumber.SequenceEqual(stream.ReadBytes(8)))
+        if (stream.ReadMagicNumber() != Kbits.MagicNumber)
         {
             throw new KbitsException("Bad magic number.");
         }
@@ -28,8 +28,8 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
         while (true)
         {
-            var blockType = stream.ReadBytes(4);
-            if (Kbits.BlockTypeName.SequenceEqual(blockType))
+            var blockType = stream.ReadBlockType();
+            if (blockType == Kbits.BlockTypeName)
             {
                 if (stream.ReadUInt32() != Kbits.SpecVersion)
                 {
@@ -40,7 +40,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
                 var value = stream.ReadUtf();
                 font.Names[nameId] = value;
             }
-            else if (Kbits.BlockTypeChar.SequenceEqual(blockType))
+            else if (blockType == Kbits.BlockTypeChar)
             {
                 if (stream.ReadUInt32() != Kbits.SpecVersion)
                 {
@@ -67,7 +67,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
                 font.Characters[codePoint] = new KbitGlyph(x, y, advance, bitmap);
             }
-            else if (Kbits.BlockTypeFin.SequenceEqual(blockType))
+            else if (blockType == Kbits.BlockTypeFin)
             {
                 break;
             }
@@ -250,7 +250,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
     public void DumpKbits(Stream stream)
     {
-        stream.WriteBytes(Kbits.MagicNumber);
+        stream.WriteMagicNumber(Kbits.MagicNumber);
         stream.WriteUInt32(Kbits.SpecVersion);
 
         stream.WriteInt32(Props.EmAscent);
@@ -262,7 +262,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
         foreach (var (nameId, value) in Names)
         {
-            stream.WriteBytes(Kbits.BlockTypeName);
+            stream.WriteBlockType(Kbits.BlockTypeName);
             stream.WriteUInt32(Kbits.SpecVersion);
             stream.WriteInt32(nameId);
             stream.WriteUtf(value);
@@ -270,7 +270,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
         foreach (var (codePoint, glyph) in Characters)
         {
-            stream.WriteBytes(Kbits.BlockTypeChar);
+            stream.WriteBlockType(Kbits.BlockTypeChar);
             stream.WriteUInt32(Kbits.SpecVersion);
             stream.WriteInt32(codePoint);
             stream.WriteInt32(glyph.Advance);
@@ -287,7 +287,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
             }
         }
 
-        stream.WriteBytes(Kbits.BlockTypeFin);
+        stream.WriteBlockType(Kbits.BlockTypeFin);
     }
 
     public byte[] DumpKbitsToBytes()

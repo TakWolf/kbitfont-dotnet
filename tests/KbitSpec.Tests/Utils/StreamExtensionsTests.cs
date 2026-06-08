@@ -26,6 +26,23 @@ public class StreamExtensionsTests
     }
 
     [Fact]
+    public void TestMagicNumberAndBlockType()
+    {
+        using var stream = new MemoryStream();
+        Assert.Equal(8, stream.WriteMagicNumber(Kbits.MagicNumber));
+        Assert.Equal(4, stream.WriteBlockType(Kbits.BlockTypeName));
+        Assert.Equal(4, stream.WriteBlockType(Kbits.BlockTypeChar));
+        Assert.Equal(4, stream.WriteBlockType(Kbits.BlockTypeFin));
+        Assert.Equal(20, stream.Position);
+        stream.Seek(0, SeekOrigin.Begin);
+        Assert.Equal(Kbits.MagicNumber, stream.ReadMagicNumber());
+        Assert.Equal(Kbits.BlockTypeName, stream.ReadBlockType());
+        Assert.Equal(Kbits.BlockTypeChar, stream.ReadBlockType());
+        Assert.Equal(Kbits.BlockTypeFin, stream.ReadBlockType());
+        Assert.Equal(20, stream.Position);
+    }
+
+    [Fact]
     public void TestUInt8()
     {
         using var stream = new MemoryStream();
