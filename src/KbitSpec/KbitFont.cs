@@ -1,4 +1,3 @@
-using System.Text;
 using System.Xml;
 using KbitSpec.Errors;
 using KbitSpec.Utils;
@@ -169,7 +168,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
                         List<List<byte>>? bitmap = null;
                         if (data is not null)
                         {
-                            using var stream = new MemoryStream(Base64.DecodeNoPadding(Encoding.ASCII.GetBytes(data)));
+                            using var stream = new MemoryStream(Base64.DecodeNoPadding(data));
                             bitmap = stream.ReadBitmap();
                         }
 
@@ -350,7 +349,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
         {
             using var stream = new MemoryStream();
             stream.WriteBitmap(glyph.Bitmap);
-            var data = Encoding.ASCII.GetString(Base64.EncodeNoPadding(stream.ToArray()));
+            var data = Base64.EncodeNoPadding(stream.ToArray());
             Kbitx.WriteXmlTagLine(writer, Kbitx.TagGlyph, [
                 (Kbitx.AttrUnicode, codePoint),
                 (Kbitx.AttrX, glyph.X),
@@ -364,7 +363,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
         {
             using var stream = new MemoryStream();
             stream.WriteBitmap(glyph.Bitmap);
-            var data = Encoding.ASCII.GetString(Base64.EncodeNoPadding(stream.ToArray()));
+            var data = Base64.EncodeNoPadding(stream.ToArray());
             Kbitx.WriteXmlTagLine(writer, Kbitx.TagGlyph, [
                 (Kbitx.AttrName, glyphName),
                 (Kbitx.AttrX, glyph.X),

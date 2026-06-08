@@ -6,17 +6,16 @@ namespace KbitSpec.Utils;
 
 internal static class Base64
 {
-    public static byte[] EncodeNoPadding(byte[] data)
+    public static string EncodeNoPadding(byte[] data)
     {
         var text = Convert.ToBase64String(data);
         text = text.TrimEnd('=');
-        return Encoding.ASCII.GetBytes(text);
+        return text;
     }
 
-    public static byte[] DecodeNoPadding(byte[] data)
+    public static byte[] DecodeNoPadding(string text)
     {
-        var text = Encoding.ASCII.GetString(data);
-        text = text.PadRight((int)Math.Ceiling(text.Length / 4.0) * 4, '=');
+        text = text.PadRight((text.Length + 3) / 4 * 4, '=');
         return Convert.FromBase64String(text);
     }
 }

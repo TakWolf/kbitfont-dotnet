@@ -8,8 +8,8 @@ public class Base64Tests
     public void TestBase64()
     {
         var plain = "Hello World"u8.ToArray();
-        var encoded = "SGVsbG8gV29ybGQ"u8.ToArray();
-        Assert.True(encoded.SequenceEqual(Base64.EncodeNoPadding(plain)));
+        var encoded = "SGVsbG8gV29ybGQ";
+        Assert.Equal(encoded, Base64.EncodeNoPadding(plain));
         Assert.True(plain.SequenceEqual(Base64.DecodeNoPadding(encoded)));
     }
 }
