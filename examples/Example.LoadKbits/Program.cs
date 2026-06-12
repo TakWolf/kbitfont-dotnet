@@ -1,4 +1,4 @@
-﻿using KbitSpec;
+using KbitSpec;
 
 var outputsDir = Path.Combine("build");
 if (Directory.Exists(outputsDir))
