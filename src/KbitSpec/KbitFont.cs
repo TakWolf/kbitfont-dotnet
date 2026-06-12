@@ -24,6 +24,8 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
         font.Props.LineDescent = stream.ReadInt32();
         font.Props.LineGap = stream.ReadInt32();
         font.Props.XHeight = stream.ReadInt32();
+        font.Props.CapHeight = font.Props.XHeight;
+        font.Props.NewGlyphWidth = font.Props.EmAscent + font.Props.EmDescent;
 
         while (true)
         {
@@ -137,6 +139,9 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
                                 break;
                             case Kbitx.PropCapHeight:
                                 font.Props.CapHeight = value.Value;
+                                break;
+                            case Kbitx.PropNewGlyphWidth:
+                                font.Props.NewGlyphWidth = value.Value;
                                 break;
                         }
                         break;
@@ -335,6 +340,10 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
         Kbitx.WriteXmlTagLine(writer, Kbitx.TagProp, [
             (Kbitx.AttrId, Kbitx.PropCapHeight),
             (Kbitx.AttrValue, Props.CapHeight)
+        ]);
+        Kbitx.WriteXmlTagLine(writer, Kbitx.TagProp, [
+            (Kbitx.AttrId, Kbitx.PropNewGlyphWidth),
+            (Kbitx.AttrValue, Props.NewGlyphWidth)
         ]);
 
         foreach (var (nameId, value) in Names)

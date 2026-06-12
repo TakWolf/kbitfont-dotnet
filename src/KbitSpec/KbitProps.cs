@@ -11,6 +11,7 @@ public class KbitProps : ICopyable<KbitProps>, IEquatable<KbitProps>
     public int LineGap { get; set; }
     public int XHeight { get; set; }
     public int CapHeight { get; set; }
+    public int NewGlyphWidth { get; set; }
 
     public KbitProps(
         int emAscent = 0,
@@ -19,7 +20,8 @@ public class KbitProps : ICopyable<KbitProps>, IEquatable<KbitProps>
         int lineDescent = 0,
         int lineGap = 0,
         int xHeight = 0,
-        int capHeight = 0)
+        int capHeight = 0,
+        int newGlyphWidth = 0)
     {
         EmAscent = emAscent;
         EmDescent = emDescent;
@@ -28,6 +30,7 @@ public class KbitProps : ICopyable<KbitProps>, IEquatable<KbitProps>
         LineGap = lineGap;
         XHeight = xHeight;
         CapHeight = capHeight;
+        NewGlyphWidth = newGlyphWidth;
     }
 
     public int EmHeight => EmAscent + EmDescent;
@@ -41,7 +44,8 @@ public class KbitProps : ICopyable<KbitProps>, IEquatable<KbitProps>
         LineDescent,
         LineGap,
         XHeight,
-        CapHeight);
+        CapHeight,
+        NewGlyphWidth);
 
     public KbitProps DeepCopy() => Copy();
 
@@ -61,7 +65,8 @@ public class KbitProps : ICopyable<KbitProps>, IEquatable<KbitProps>
                LineDescent == other.LineDescent &&
                LineGap == other.LineGap &&
                XHeight == other.XHeight &&
-               CapHeight == other.CapHeight;
+               CapHeight == other.CapHeight &&
+               NewGlyphWidth == other.NewGlyphWidth;
     }
 
     public override bool Equals(object? other)

@@ -24,7 +24,8 @@ public class KbitPropsTests
             lineDescent: 4,
             lineGap: 5,
             xHeight: 6,
-            capHeight: 7);
+            capHeight: 7,
+            newGlyphWidth: 8);
         var props2 = props1.Copy();
         var props3 = props1.DeepCopy();
 
@@ -44,7 +45,8 @@ public class KbitPropsTests
             lineDescent: 4,
             lineGap: 5,
             xHeight: 6,
-            capHeight: 7);
+            capHeight: 7,
+            newGlyphWidth: 8);
         var props2 = new KbitProps(
             emAscent: 1,
             emDescent: 2,
@@ -52,7 +54,8 @@ public class KbitPropsTests
             lineDescent: 4,
             lineGap: 5,
             xHeight: 6,
-            capHeight: 7);
+            capHeight: 7,
+            newGlyphWidth: 8);
         Assert.Equal(props1, props2);
     }
 }

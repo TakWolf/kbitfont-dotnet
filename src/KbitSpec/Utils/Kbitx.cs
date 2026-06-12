@@ -31,6 +31,7 @@ internal static class Kbitx
     public const string PropLineGap = "lineGap";
     public const string PropXHeight = "xHeight";
     public const string PropCapHeight = "capHeight";
+    public const string PropNewGlyphWidth = "newGlyphWidth";
 
     public const string XmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     public const string XmlDoctype = $"<!DOCTYPE {TagRoot} PUBLIC \"-//Kreative//DTD BitsNPicasBitmap 1.0//EN\" \"http://www.kreativekorp.com/dtd/kbitx.dtd\">\n";
