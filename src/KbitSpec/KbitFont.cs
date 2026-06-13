@@ -303,7 +303,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
     public void SaveKbits(string path)
     {
-        using var stream = File.OpenWrite(path);
+        using var stream = File.Create(path);
         DumpKbits(stream);
     }
 
@@ -422,7 +422,7 @@ public class KbitFont : ICopyable<KbitFont>, IEquatable<KbitFont>
 
     public void SaveKbitx(string path)
     {
-        using var writer = new StreamWriter(path);
+        using var writer = File.CreateText(path);
         DumpKbitx(writer);
     }
 
