@@ -3,7 +3,7 @@
         <AssemblyName>KbitFont</AssemblyName>
 
         <Title>KbitFont</Title>
-        <Description>A library for parsing Bits'N'Picas native save format files ('.kbits' and '.kbitx')</Description>
+        <Description>A library for handling Bits'N'Picas native save format files ('.kbits' and '.kbitx')</Description>
         <Authors>TakWolf</Authors>
         <Copyright>Copyright (c) 2025 TakWolf</Copyright>
 
