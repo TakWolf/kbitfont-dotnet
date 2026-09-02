@@ -50,7 +50,7 @@ font.NamedGlyphs[".notdef"] = new KbitGlyph(
         [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
     ]);
 
-font.Characters[65] = new KbitGlyph(
+font.Characters[0x0041] = new KbitGlyph(
     x: 0,
     y: 14,
     advance: 8,
